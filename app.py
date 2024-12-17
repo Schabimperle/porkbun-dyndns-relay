@@ -1,11 +1,9 @@
 import logging
 import requests
-import signal
-import sys
-import tldextract
 from flask import Flask, request, jsonify
-from threading import Thread
+import tldextract
 
+# Flask app initialization
 app = Flask(__name__)
 
 # Set up logging
@@ -122,27 +120,5 @@ def handle_update_dns_record():
 
     return jsonify({'responses': responses}), 200
 
-# Graceful shutdown handler
-def graceful_shutdown(signal_number, frame):
-    logging.info('Received exit signal. Shutting down gracefully...')
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func:
-        func()
-    logging.info('Server has shut down.')
-    sys.exit(0)
-
-# Register signals for graceful shutdown
-signal.signal(signal.SIGINT, graceful_shutdown)  # Handle Ctrl+C
-signal.signal(signal.SIGTERM, graceful_shutdown)  # Handle termination signal
-
 if __name__ == '__main__':
-    # Start the Flask app in a separate thread for proper shutdown handling
-    def run_app():
-        app.run(host='::', port=5454)  # Bind to IPv6 and IPv4
-
-    # Start Flask in a separate thread
-    flask_thread = Thread(target=run_app)
-    flask_thread.start()
-
-    # Wait for Flask thread to complete (or receive a shutdown signal)
-    flask_thread.join()
+    logging.info('This script should be run with Gunicorn, not directly.')

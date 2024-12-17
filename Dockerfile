@@ -17,4 +17,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
 
 # Command to run the server when the container starts
-CMD ["python", "app.py"]
+CMD ["gunicorn", "-w 1", "-b 0.0.0.0:5454", "app:app"]
